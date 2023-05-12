@@ -1,0 +1,70 @@
+class NegativeValueError(Exception):
+    pass
+
+class InvalidnputError(Exception):
+    pass
+
+class InsufficientFundsError(Exception):
+    pass
+
+class BankAccount(object):
+    def __init__(self, balance):
+        if balance < 0:
+        	raise NegativeValueError('Неверный баланс')
+        self.balance = balance
+        
+
+    def deposit(self, amount):
+        if amount <= 0:
+           raise InvalidnputError('Сумма пополнения должна быть больше нуля')
+        self.balance += amount
+
+    def withdraw(self, amount):
+        if amount <= 0:
+           raise InvalidnputError('Сумма снятия должна быть больше нуля')
+        if amount > self.balance:
+            raise InsufficientFundsError('Недостаточно средств на счете')
+        self.balance -= amount
+
+    def transfer(self, amount, recipient):
+        if amount <= 0:
+           raise InvalidnputError('Сумма перевода должна быть больше нуля')
+        if amount > self.balance:
+           raise InsufficientFundsError('Недостаточно средств на счете')
+        self.balance -= amount
+        recipient.deposit(amount)
+
+class User:
+	def __init__ (self,bank):
+		self.bank=bank
+		
+	def deposit(self,amount):
+		try:
+			self.bank.deposit(amount)
+		except InvalidnputError as e:
+			print(e)
+		
+	def withdraw(self,amount):
+		try:
+			self.bank.deposit(amount)
+		except InvalidnputError as e:
+			print(e)
+		except InsufficientFundsError as i:
+			print(i)
+	
+	def transfer(self,amount,recipient):
+		try:
+			self.bank.deposit(amount,recipient)
+		except InvalidnputError as e:
+			print(e)
+		except InsufficientFundsError as i:
+			print(i)
+		'тут точно такае же реализация еще двух методов (withdraw и transfer)'
+if __name__ =='__main__':
+	bank1 = BankAccount(4000)
+	bank2 = BankAccount(3000)
+	user1 = User(bank1)
+	user2 = User(bank1)
+	user1.deposit(1000)
+	user1.withdraw(2000)
+	user1.transfer(1000,user2)
